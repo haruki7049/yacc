@@ -1,5 +1,4 @@
 {
-  {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
@@ -21,5 +20,4 @@
           formatting = treefmtEval.config.build.check self;
         };
       });
-}
 }

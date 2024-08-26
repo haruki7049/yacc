@@ -19,33 +19,32 @@
 
 #include "portable.h"
 
-int
-asprintf(char **ret, const char *format, ...)
-{
-	int retval;
-	va_list ap;
+int asprintf(char **ret, const char *format, ...) {
+  int retval;
+  va_list ap;
 
-	va_start(ap, format);
+  va_start(ap, format);
 
-	if ((*ret = malloc(32)) == NULL) {
-		retval = -1;
-		goto out;
-	}
+  if ((*ret = malloc(32)) == NULL) {
+    retval = -1;
+    goto out;
+  }
 
-	if ((retval = vsprintf(*ret, format, ap)) > 31) {
-		(void) fprintf(stderr, "asprintf failed\n");
-		exit(1);
-	}
+  if ((retval = vsprintf(*ret, format, ap)) > 31) {
+    (void)fprintf(stderr, "asprintf failed\n");
+    exit(1);
+  }
 
 out:
-	va_end(ap);
+  va_end(ap);
 
-	return retval;
+  return retval;
 }
 
 #endif /* HAVE_ASPRINTF */
 
-/*	$OpenBSD: reallocarray.c,v 1.3 2015/09/13 08:31:47 guenther Exp $	*/
+/*	$OpenBSD: reallocarray.c,v 1.3 2015/09/13 08:31:47 guenther Exp $
+ */
 /*
  * Copyright (c) 2008 Otto Moerbeek <otto@drijf.net>
  *
@@ -64,10 +63,10 @@ out:
 
 #ifndef HAVE_REALLOCARRAY
 
-#include <sys/types.h>
 #include <errno.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <sys/types.h>
 
 #ifndef SIZE_MAX
 #define SIZE_MAX ULONG_MAX
@@ -77,17 +76,15 @@ out:
  * This is sqrt(SIZE_MAX+1), as s1*s2 <= SIZE_MAX
  * if both s1 < MUL_NO_OVERFLOW and s2 < MUL_NO_OVERFLOW
  */
-#define MUL_NO_OVERFLOW	((size_t)1 << (sizeof(size_t) * 4))
+#define MUL_NO_OVERFLOW ((size_t)1 << (sizeof(size_t) * 4))
 
-void *
-reallocarray(void *optr, size_t nmemb, size_t size)
-{
-	if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-	    nmemb > 0 && SIZE_MAX / nmemb < size) {
-		errno = ENOMEM;
-		return NULL;
-	}
-	return realloc(optr, size * nmemb);
+void *reallocarray(void *optr, size_t nmemb, size_t size) {
+  if ((nmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) && nmemb > 0 &&
+      SIZE_MAX / nmemb < size) {
+    errno = ENOMEM;
+    return NULL;
+  }
+  return realloc(optr, size * nmemb);
 }
 
 #endif /* HAVE_REALLOCARRAY */
@@ -112,37 +109,35 @@ reallocarray(void *optr, size_t nmemb, size_t size)
 
 #ifndef HAVE_STRLCPY
 
-#include <sys/types.h>
 #include <string.h>
+#include <sys/types.h>
 
 /*
  * Copy string src to buffer dst of size dsize.  At most dsize-1
  * chars will be copied.  Always NUL terminates (unless dsize == 0).
  * Returns strlen(src); if retval >= dsize, truncation occurred.
  */
-size_t
-strlcpy(char *dst, const char *src, size_t dsize)
-{
-	const char *osrc = src;
-	size_t nleft = dsize;
+size_t strlcpy(char *dst, const char *src, size_t dsize) {
+  const char *osrc = src;
+  size_t nleft = dsize;
 
-	/* Copy as many bytes as will fit. */
-	if (nleft != 0) {
-		while (--nleft != 0) {
-			if ((*dst++ = *src++) == '\0')
-				break;
-		}
-	}
+  /* Copy as many bytes as will fit. */
+  if (nleft != 0) {
+    while (--nleft != 0) {
+      if ((*dst++ = *src++) == '\0')
+        break;
+    }
+  }
 
-	/* Not enough room in dst, add NUL and traverse rest of src. */
-	if (nleft == 0) {
-		if (dsize != 0)
-			*dst = '\0';		/* NUL-terminate dst */
-		while (*src++)
-			;
-	}
+  /* Not enough room in dst, add NUL and traverse rest of src. */
+  if (nleft == 0) {
+    if (dsize != 0)
+      *dst = '\0'; /* NUL-terminate dst */
+    while (*src++)
+      ;
+  }
 
-	return(src - osrc - 1);	/* count does not include NUL */
+  return (src - osrc - 1); /* count does not include NUL */
 }
 
 #endif /* HAVE_STRLCPY */
